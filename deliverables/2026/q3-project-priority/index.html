@@ -1,0 +1,1442 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light" />
+    <title>Q3 项目优先级与人员部署建议</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500&family=Noto+Sans+SC:wght@400;500&display=swap");
+
+      :root {
+        --page-bg: #f4f5f7;
+        --surface: #ffffff;
+        --surface-subtle: #f8f9fa;
+        --text-strong: #17191c;
+        --text: #34383e;
+        --text-muted: #70767f;
+        --border: #dfe2e6;
+        --border-strong: #c9cdd3;
+        --blue: #2468d8;
+        --blue-soft: #edf4ff;
+        --blue-border: #b8d2fb;
+        --green: #237a57;
+        --green-soft: #edf8f2;
+        --green-border: #b9dfce;
+        --amber: #a45b09;
+        --amber-soft: #fff5e8;
+        --amber-border: #efd0a7;
+        --neutral-soft: #f2f3f5;
+        --neutral-border: #d8dbe0;
+        --space-1: 4px;
+        --space-2: 8px;
+        --space-3: 12px;
+        --space-4: 16px;
+        --space-5: 24px;
+        --space-6: 32px;
+        --space-7: 48px;
+        --space-8: 64px;
+        --radius-sm: 4px;
+        --radius-md: 8px;
+        --font-xs: 12px;
+        --font-sm: 14px;
+        --font-base: 16px;
+        --font-md: 20px;
+        --font-lg: 24px;
+        --font-xl: 32px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        background: var(--page-bg);
+      }
+
+      body {
+        margin: 0;
+        color: var(--text);
+        background: var(--page-bg);
+        font-family: "IBM Plex Sans", "Noto Sans SC", sans-serif;
+        font-size: var(--font-base);
+        font-weight: 400;
+        line-height: 1.6;
+      }
+
+      h1,
+      h2,
+      h3,
+      p,
+      ul,
+      ol,
+      figure {
+        margin: 0;
+      }
+
+      h1,
+      h2,
+      h3,
+      strong,
+      th {
+        color: var(--text-strong);
+        font-weight: 500;
+      }
+
+      .page {
+        width: min(100%, 1400px);
+        margin: 0 auto;
+        padding: var(--space-6) var(--space-6) var(--space-8);
+      }
+
+      .report-header {
+        display: grid;
+        grid-template-columns: minmax(0, 1.25fr) minmax(360px, 0.75fr);
+        gap: var(--space-7);
+        align-items: end;
+        padding-bottom: var(--space-5);
+        border-bottom: 1px solid var(--border-strong);
+      }
+
+      .report-kicker {
+        margin-bottom: var(--space-2);
+        color: var(--blue);
+        font-size: var(--font-xs);
+        font-weight: 500;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        max-width: 860px;
+        font-size: var(--font-xl);
+        line-height: 1.25;
+      }
+
+      .report-summary {
+        color: var(--text-muted);
+        font-size: var(--font-sm);
+      }
+
+      .report-summary strong {
+        display: block;
+        margin-bottom: var(--space-1);
+        font-size: var(--font-md);
+        line-height: 1.35;
+      }
+
+      .decision-strip {
+        display: grid;
+        grid-template-columns: 1.05fr 1fr 1.25fr;
+        margin-top: var(--space-4);
+        border-top: 1px solid var(--border);
+        border-bottom: 1px solid var(--border);
+        background: var(--surface);
+      }
+
+      .decision-item {
+        min-width: 0;
+        padding: var(--space-4) var(--space-5);
+      }
+
+      .decision-item + .decision-item {
+        border-left: 1px solid var(--border);
+      }
+
+      .decision-label {
+        display: block;
+        margin-bottom: var(--space-1);
+        color: var(--text-muted);
+        font-size: var(--font-xs);
+      }
+
+      .decision-value {
+        display: block;
+        color: var(--text-strong);
+        font-size: var(--font-md);
+        font-weight: 500;
+        line-height: 1.35;
+      }
+
+      .decision-context {
+        display: block;
+        margin-top: var(--space-1);
+        color: var(--text-muted);
+        font-size: var(--font-sm);
+      }
+
+      .overview {
+        display: grid;
+        grid-template-columns: minmax(0, 1.7fr) minmax(320px, 0.72fr);
+        gap: var(--space-5);
+        margin-top: var(--space-5);
+        align-items: stretch;
+      }
+
+      .matrix-panel,
+      .decision-panel {
+        min-width: 0;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        background: var(--surface);
+      }
+
+      .matrix-panel {
+        padding: var(--space-5);
+      }
+
+      .panel-heading {
+        display: flex;
+        justify-content: space-between;
+        gap: var(--space-5);
+        align-items: end;
+        margin-bottom: var(--space-4);
+      }
+
+      .panel-heading h2,
+      .section-heading h2 {
+        font-size: var(--font-lg);
+        line-height: 1.35;
+      }
+
+      .panel-heading p,
+      .section-heading p {
+        max-width: 560px;
+        color: var(--text-muted);
+        font-size: var(--font-sm);
+      }
+
+      .matrix-axis-top {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        margin: 0 0 var(--space-2) 34px;
+        color: var(--text-muted);
+        font-size: var(--font-xs);
+      }
+
+      .matrix-axis-top span:last-child {
+        text-align: right;
+      }
+
+      .matrix-body {
+        display: grid;
+        grid-template-columns: 26px minmax(0, 1fr);
+        gap: var(--space-2);
+      }
+
+      .axis-y {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-muted);
+        font-size: var(--font-xs);
+        writing-mode: vertical-rl;
+        transform: rotate(180deg);
+      }
+
+      .matrix-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-areas:
+          "q2 q1"
+          "q4 q3";
+        border: 1px solid var(--border-strong);
+        border-radius: var(--radius-md);
+        overflow: hidden;
+      }
+
+      .quadrant {
+        min-width: 0;
+        min-height: 270px;
+        padding: var(--space-4);
+      }
+
+      .quadrant-q1 {
+        grid-area: q1;
+        border-left: 1px solid var(--border-strong);
+        background: var(--blue-soft);
+      }
+
+      .quadrant-q2 {
+        grid-area: q2;
+        background: var(--green-soft);
+      }
+
+      .quadrant-q3 {
+        grid-area: q3;
+        border-top: 1px solid var(--border-strong);
+        border-left: 1px solid var(--border-strong);
+        background: var(--amber-soft);
+      }
+
+      .quadrant-q4 {
+        grid-area: q4;
+        border-top: 1px solid var(--border-strong);
+        background: var(--neutral-soft);
+      }
+
+      .quadrant-header {
+        display: flex;
+        justify-content: space-between;
+        gap: var(--space-3);
+        align-items: start;
+        margin-bottom: var(--space-3);
+      }
+
+      .quadrant-title {
+        display: block;
+        color: var(--text-strong);
+        font-size: var(--font-sm);
+        font-weight: 500;
+      }
+
+      .quadrant-subtitle {
+        display: block;
+        margin-top: var(--space-1);
+        color: var(--text-muted);
+        font-size: var(--font-xs);
+      }
+
+      .status {
+        display: inline-flex;
+        min-height: 24px;
+        align-items: center;
+        padding: 0 var(--space-2);
+        border: 1px solid var(--neutral-border);
+        border-radius: var(--radius-sm);
+        background: var(--surface);
+        color: var(--text);
+        font-size: var(--font-xs);
+        font-weight: 500;
+        white-space: nowrap;
+      }
+
+      .status-blue {
+        border-color: var(--blue-border);
+        color: var(--blue);
+      }
+
+      .status-green {
+        border-color: var(--green-border);
+        color: var(--green);
+      }
+
+      .status-amber {
+        border-color: var(--amber-border);
+        color: var(--amber);
+      }
+
+      .initiative-list {
+        display: grid;
+        gap: var(--space-2);
+      }
+
+      .initiative-row {
+        display: grid;
+        grid-template-columns: 8px minmax(0, 1fr) auto;
+        gap: var(--space-2);
+        align-items: start;
+        padding-top: var(--space-2);
+        border-top: 1px solid color-mix(in srgb, var(--border-strong) 70%, transparent);
+      }
+
+      .initiative-dot {
+        width: 7px;
+        height: 7px;
+        margin-top: 8px;
+        border-radius: 50%;
+        background: var(--text-muted);
+      }
+
+      .quadrant-q1 .initiative-dot {
+        background: var(--blue);
+      }
+
+      .quadrant-q2 .initiative-dot {
+        background: var(--green);
+      }
+
+      .quadrant-q3 .initiative-dot {
+        background: var(--amber);
+      }
+
+      .initiative-name {
+        display: block;
+        color: var(--text-strong);
+        font-size: var(--font-sm);
+        font-weight: 500;
+      }
+
+      .initiative-note {
+        display: block;
+        margin-top: var(--space-1);
+        color: var(--text-muted);
+        font-size: var(--font-xs);
+        line-height: 1.5;
+      }
+
+      .main-initiative {
+        padding: var(--space-4);
+        border: 1px solid var(--blue-border);
+        border-radius: var(--radius-md);
+        background: var(--surface);
+      }
+
+      .main-initiative-title {
+        display: flex;
+        justify-content: space-between;
+        gap: var(--space-3);
+        align-items: start;
+      }
+
+      .main-initiative h3 {
+        font-size: var(--font-md);
+        line-height: 1.35;
+      }
+
+      .main-initiative p {
+        margin-top: var(--space-2);
+        color: var(--text-muted);
+        font-size: var(--font-sm);
+      }
+
+      .scope-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-2);
+        margin-top: var(--space-3);
+      }
+
+      .scope-list span {
+        display: inline-flex;
+        min-height: 28px;
+        align-items: center;
+        padding: 0 var(--space-2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        background: var(--surface-subtle);
+        color: var(--text);
+        font-size: var(--font-xs);
+      }
+
+      .matrix-axis-bottom {
+        display: flex;
+        justify-content: space-between;
+        gap: var(--space-4);
+        margin: var(--space-2) 0 0 34px;
+        color: var(--text-muted);
+        font-size: var(--font-xs);
+      }
+
+      .matrix-axis-bottom strong {
+        color: var(--text);
+      }
+
+      .decision-panel {
+        display: flex;
+        flex-direction: column;
+        padding: var(--space-5);
+      }
+
+      .decision-panel-kicker {
+        color: var(--blue);
+        font-size: var(--font-xs);
+        font-weight: 500;
+      }
+
+      .decision-panel h2 {
+        margin-top: var(--space-2);
+        font-size: var(--font-lg);
+        line-height: 1.35;
+      }
+
+      .decision-panel > p {
+        margin-top: var(--space-2);
+        color: var(--text-muted);
+        font-size: var(--font-sm);
+      }
+
+      .allocation-focus {
+        display: grid;
+        grid-template-columns: 92px minmax(0, 1fr);
+        gap: var(--space-3);
+        align-items: center;
+        margin-top: var(--space-5);
+        padding: var(--space-4) 0;
+        border-top: 1px solid var(--border);
+        border-bottom: 1px solid var(--border);
+      }
+
+      .allocation-number {
+        color: var(--blue);
+        font-size: var(--font-xl);
+        font-weight: 500;
+        font-variant-numeric: tabular-nums;
+        line-height: 1;
+      }
+
+      .allocation-focus strong {
+        display: block;
+        font-size: var(--font-sm);
+      }
+
+      .allocation-focus span {
+        display: block;
+        margin-top: var(--space-1);
+        color: var(--text-muted);
+        font-size: var(--font-xs);
+      }
+
+      .staff-baseline {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: var(--space-2) var(--space-4);
+        margin-top: var(--space-4);
+      }
+
+      .staff-role {
+        display: flex;
+        justify-content: space-between;
+        gap: var(--space-2);
+        padding-bottom: var(--space-2);
+        border-bottom: 1px solid var(--border);
+        font-size: var(--font-sm);
+      }
+
+      .staff-role span:last-child {
+        color: var(--text-strong);
+        font-weight: 500;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .action-steps {
+        display: grid;
+        gap: var(--space-3);
+        margin-top: var(--space-5);
+        padding: 0;
+        list-style: none;
+      }
+
+      .action-step {
+        display: grid;
+        grid-template-columns: 24px minmax(0, 1fr);
+        gap: var(--space-3);
+      }
+
+      .step-number {
+        display: flex;
+        width: 24px;
+        height: 24px;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: var(--text-strong);
+        color: var(--surface);
+        font-size: var(--font-xs);
+        font-weight: 500;
+      }
+
+      .action-step strong {
+        display: block;
+        font-size: var(--font-sm);
+      }
+
+      .action-step p {
+        margin-top: var(--space-1);
+        color: var(--text-muted);
+        font-size: var(--font-xs);
+      }
+
+      .constraint-note {
+        margin-top: auto;
+        padding-top: var(--space-5);
+      }
+
+      .constraint-note p {
+        padding: var(--space-3);
+        border-left: 3px solid var(--amber);
+        background: var(--amber-soft);
+        color: var(--text);
+        font-size: var(--font-sm);
+      }
+
+      .section {
+        margin-top: var(--space-7);
+      }
+
+      .section-heading {
+        display: flex;
+        justify-content: space-between;
+        gap: var(--space-5);
+        align-items: end;
+        margin-bottom: var(--space-4);
+        padding-bottom: var(--space-3);
+        border-bottom: 1px solid var(--border-strong);
+      }
+
+      .allocation-chart {
+        display: grid;
+        grid-template-columns: 68fr 22fr 10fr;
+        min-height: 52px;
+        border: 1px solid var(--border-strong);
+        border-radius: var(--radius-md);
+        overflow: hidden;
+      }
+
+      .allocation-segment {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 var(--space-3);
+        color: var(--text-strong);
+        font-size: var(--font-sm);
+        font-weight: 500;
+        text-align: center;
+      }
+
+      .allocation-segment + .allocation-segment {
+        border-left: 1px solid var(--border-strong);
+      }
+
+      .segment-main {
+        background: var(--blue-soft);
+      }
+
+      .segment-capability {
+        background: var(--green-soft);
+      }
+
+      .segment-internal {
+        background: var(--amber-soft);
+      }
+
+      .staffing-tracks {
+        display: grid;
+        grid-template-columns: 1.25fr 1fr 0.8fr;
+        gap: var(--space-5);
+        margin-top: var(--space-5);
+      }
+
+      .staffing-track {
+        min-width: 0;
+        padding-top: var(--space-3);
+        border-top: 3px solid var(--border-strong);
+      }
+
+      .staffing-track-main {
+        border-top-color: var(--blue);
+      }
+
+      .staffing-track-capability {
+        border-top-color: var(--green);
+      }
+
+      .staffing-track-internal {
+        border-top-color: var(--amber);
+      }
+
+      .staffing-track h3 {
+        font-size: var(--font-md);
+      }
+
+      .track-share {
+        color: var(--text-muted);
+        font-size: var(--font-sm);
+      }
+
+      .role-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: var(--space-2) var(--space-4);
+        margin-top: var(--space-3);
+      }
+
+      .role-grid div {
+        display: flex;
+        justify-content: space-between;
+        gap: var(--space-2);
+        padding-bottom: var(--space-2);
+        border-bottom: 1px solid var(--border);
+        font-size: var(--font-sm);
+      }
+
+      .role-grid span:last-child {
+        color: var(--text-strong);
+        font-weight: 500;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .track-rule {
+        margin-top: var(--space-3);
+        color: var(--text-muted);
+        font-size: var(--font-xs);
+      }
+
+      .hc-trigger {
+        display: grid;
+        grid-template-columns: 220px minmax(0, 1fr);
+        gap: var(--space-5);
+        margin-top: var(--space-5);
+        padding: var(--space-4) var(--space-5);
+        border: 1px solid var(--blue-border);
+        border-radius: var(--radius-md);
+        background: var(--blue-soft);
+      }
+
+      .hc-trigger h3 {
+        font-size: var(--font-md);
+      }
+
+      .hc-trigger ul {
+        margin: 0;
+        padding-left: 20px;
+      }
+
+      .hc-trigger li {
+        font-size: var(--font-sm);
+      }
+
+      .hc-trigger li + li {
+        margin-top: var(--space-1);
+      }
+
+      .portfolio-table-wrap {
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        background: var(--surface);
+        overflow: hidden;
+      }
+
+      .portfolio-table {
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: fixed;
+      }
+
+      .portfolio-table th,
+      .portfolio-table td {
+        padding: var(--space-3) var(--space-4);
+        border-bottom: 1px solid var(--border);
+        text-align: left;
+        vertical-align: top;
+      }
+
+      .portfolio-table tr:last-child td {
+        border-bottom: 0;
+      }
+
+      .portfolio-table th {
+        background: var(--surface-subtle);
+        color: var(--text-muted);
+        font-size: var(--font-xs);
+      }
+
+      .portfolio-table td {
+        font-size: var(--font-sm);
+      }
+
+      .portfolio-table th:nth-child(1) {
+        width: 16%;
+      }
+
+      .portfolio-table th:nth-child(2) {
+        width: 13%;
+      }
+
+      .portfolio-table th:nth-child(3) {
+        width: 17%;
+      }
+
+      .portfolio-table th:nth-child(4) {
+        width: 34%;
+      }
+
+      .portfolio-table th:nth-child(5) {
+        width: 20%;
+      }
+
+      .table-subtext {
+        display: block;
+        margin-top: var(--space-1);
+        color: var(--text-muted);
+        font-size: var(--font-xs);
+      }
+
+      .timeline {
+        display: grid;
+        grid-template-columns: 120px repeat(3, minmax(0, 1fr));
+        border-top: 1px solid var(--border-strong);
+        border-left: 1px solid var(--border-strong);
+      }
+
+      .timeline > div {
+        min-width: 0;
+        padding: var(--space-3) var(--space-4);
+        border-right: 1px solid var(--border-strong);
+        border-bottom: 1px solid var(--border-strong);
+        background: var(--surface);
+        font-size: var(--font-sm);
+      }
+
+      .timeline .timeline-header {
+        background: var(--surface-subtle);
+        color: var(--text-muted);
+        font-size: var(--font-xs);
+        font-weight: 500;
+      }
+
+      .timeline .timeline-lane {
+        color: var(--text-strong);
+        font-weight: 500;
+      }
+
+      .month-label {
+        display: none;
+      }
+
+      .report-footer {
+        display: flex;
+        justify-content: space-between;
+        gap: var(--space-5);
+        margin-top: var(--space-7);
+        padding-top: var(--space-4);
+        border-top: 1px solid var(--border-strong);
+        color: var(--text-muted);
+        font-size: var(--font-xs);
+      }
+
+      @media (max-width: 1120px) {
+        .report-header,
+        .overview {
+          grid-template-columns: 1fr;
+        }
+
+        .report-header {
+          gap: var(--space-4);
+        }
+
+        .decision-panel {
+          display: grid;
+          grid-template-columns: minmax(0, 1fr) minmax(300px, 0.8fr);
+          gap: var(--space-5);
+        }
+
+        .decision-panel .allocation-focus,
+        .decision-panel .staff-baseline {
+          grid-column: 2;
+        }
+
+        .decision-panel .action-steps,
+        .decision-panel .constraint-note {
+          grid-column: 1 / -1;
+        }
+
+        .staffing-tracks {
+          grid-template-columns: 1fr 1fr;
+        }
+
+        .staffing-track-internal {
+          grid-column: 1 / -1;
+        }
+      }
+
+      @media (max-width: 800px) {
+        .page {
+          padding: var(--space-5) var(--space-4) var(--space-7);
+        }
+
+        .decision-strip,
+        .decision-panel,
+        .staffing-tracks,
+        .hc-trigger {
+          grid-template-columns: 1fr;
+        }
+
+        .decision-item + .decision-item {
+          border-top: 1px solid var(--border);
+          border-left: 0;
+        }
+
+        .decision-panel .allocation-focus,
+        .decision-panel .staff-baseline,
+        .decision-panel .action-steps,
+        .decision-panel .constraint-note {
+          grid-column: 1;
+        }
+
+        .staffing-track-internal {
+          grid-column: auto;
+        }
+
+        .section-heading,
+        .panel-heading {
+          display: block;
+        }
+
+        .section-heading p,
+        .panel-heading p {
+          margin-top: var(--space-2);
+        }
+
+        .portfolio-table-wrap {
+          border: 0;
+          background: transparent;
+          overflow: visible;
+        }
+
+        .portfolio-table,
+        .portfolio-table tbody,
+        .portfolio-table tr,
+        .portfolio-table td {
+          display: block;
+          width: 100%;
+        }
+
+        .portfolio-table thead {
+          display: none;
+        }
+
+        .portfolio-table tr {
+          margin-bottom: var(--space-3);
+          padding: var(--space-3) var(--space-4);
+          border: 1px solid var(--border);
+          border-radius: var(--radius-md);
+          background: var(--surface);
+        }
+
+        .portfolio-table td {
+          padding: var(--space-1) 0;
+          border: 0;
+        }
+
+        .portfolio-table td::before {
+          display: block;
+          color: var(--text-muted);
+          font-size: var(--font-xs);
+          content: attr(data-label);
+        }
+
+        .timeline {
+          grid-template-columns: 92px minmax(0, 1fr);
+        }
+
+        .timeline-header:not(:first-child) {
+          display: none;
+        }
+
+        .timeline-lane {
+          grid-column: 1;
+        }
+
+        .timeline-cell {
+          grid-column: 2;
+        }
+
+        .month-label {
+          display: block;
+          color: var(--text-muted);
+          font-size: var(--font-xs);
+        }
+      }
+
+      @media (max-width: 620px) {
+        body {
+          font-size: var(--font-base);
+        }
+
+        h1 {
+          font-size: var(--font-lg);
+        }
+
+        .matrix-panel,
+        .decision-panel {
+          padding: var(--space-4);
+        }
+
+        .matrix-axis-top,
+        .matrix-body > .axis-y,
+        .matrix-axis-bottom {
+          display: none;
+        }
+
+        .matrix-body {
+          display: block;
+        }
+
+        .matrix-grid {
+          grid-template-columns: 1fr;
+          grid-template-areas:
+            "q1"
+            "q2"
+            "q3"
+            "q4";
+        }
+
+        .quadrant {
+          min-height: 0;
+        }
+
+        .quadrant-q1,
+        .quadrant-q3 {
+          border-left: 0;
+        }
+
+        .quadrant-q1 {
+          border-bottom: 1px solid var(--border-strong);
+        }
+
+        .quadrant-q2 {
+          border-bottom: 1px solid var(--border-strong);
+        }
+
+        .quadrant-q3 {
+          border-top: 0;
+          border-bottom: 1px solid var(--border-strong);
+        }
+
+        .quadrant-q4 {
+          border-top: 0;
+        }
+
+        .main-initiative-title,
+        .quadrant-header {
+          align-items: start;
+        }
+
+        .staff-baseline,
+        .role-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .allocation-chart {
+          grid-template-columns: 68fr 22fr 10fr;
+        }
+
+        .allocation-segment {
+          padding: 0 var(--space-1);
+          font-size: var(--font-xs);
+        }
+
+        .allocation-segment span {
+          display: none;
+        }
+
+        .allocation-segment strong {
+          display: block;
+        }
+
+        .report-footer {
+          display: block;
+        }
+
+        .report-footer span:last-child {
+          display: block;
+          margin-top: var(--space-2);
+        }
+      }
+
+      @media print {
+        html,
+        body {
+          background: var(--surface);
+        }
+
+        .page {
+          width: 100%;
+          max-width: none;
+          padding: 16px;
+        }
+
+        .matrix-panel,
+        .decision-panel,
+        .portfolio-table-wrap,
+        .hc-trigger {
+          break-inside: avoid;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <header class="report-header">
+        <div>
+          <p class="report-kicker">Q3 Portfolio Review · Value First</p>
+          <h1>Q3 项目优先级与人员部署建议</h1>
+        </div>
+        <div class="report-summary">
+          <strong>本季度只设一个公司级主线：投放系统。</strong>
+          <span>AI 与 BI 围绕业务场景建设能力；内部效率项目采用限时 MVP，不与增长主线争夺核心人力。</span>
+        </div>
+      </header>
+
+      <section class="decision-strip" aria-label="Q3 核心决策">
+        <div class="decision-item">
+          <span class="decision-label">一号工程</span>
+          <span class="decision-value">投放系统主线</span>
+          <span class="decision-context">数据、素材、广告与 Agent 形成闭环</span>
+        </div>
+        <div class="decision-item">
+          <span class="decision-label">人员动作</span>
+          <span class="decision-value">先调岗，不默认增编</span>
+          <span class="decision-context">AI 1 + 数据 1 固定到投放主线</span>
+        </div>
+        <div class="decision-item">
+          <span class="decision-label">资源纪律</span>
+          <span class="decision-value">65%-70% 产能保护投放</span>
+          <span class="decision-context">没有第二组 AI / 数据产能时，Q2 项目顺延</span>
+        </div>
+      </section>
+
+      <section class="overview" aria-label="Q3 优先级与人力结论">
+        <div class="matrix-panel">
+          <div class="panel-heading">
+            <div>
+              <h2>重要 × 紧急四象限</h2>
+              <p>价值决定是否立项；重要性决定资源保护；紧急性只决定执行顺序。</p>
+            </div>
+            <span class="status">当前初步判断</span>
+          </div>
+
+          <div class="matrix-axis-top" aria-hidden="true">
+            <span>紧急程度低</span>
+            <span>紧急程度高</span>
+          </div>
+
+          <div class="matrix-body">
+            <div class="axis-y" aria-hidden="true">重要程度由低到高 ↑</div>
+            <div class="matrix-grid" role="img" aria-label="投放系统位于重要且紧急；AI 基建、素材 Agent、BI Agent 和并入 BI 的 ABtest 位于重要不紧急；内部分发与 AI PM 收集 MVP 位于紧急不重要；AI PM 平台化与独立 ABtest 系统暂缓。">
+              <section class="quadrant quadrant-q2" aria-labelledby="q2-title">
+                <div class="quadrant-header">
+                  <div>
+                    <span class="quadrant-title" id="q2-title">Q2 · 重要不紧急</span>
+                    <span class="quadrant-subtitle">建立战略能力，分阶段投入</span>
+                  </div>
+                  <span class="status status-green">能力立项</span>
+                </div>
+                <div class="initiative-list">
+                  <div class="initiative-row">
+                    <span class="initiative-dot" aria-hidden="true"></span>
+                    <div><span class="initiative-name">AI 基建能力包</span><span class="initiative-note">评估集、语义层、自动化测试</span></div>
+                    <span class="status status-green">优先</span>
+                  </div>
+                  <div class="initiative-row">
+                    <span class="initiative-dot" aria-hidden="true"></span>
+                    <div><span class="initiative-name">素材 Agent</span><span class="initiative-note">关键帧、提示词反推、素材变体</span></div>
+                    <span class="status status-green">条件</span>
+                  </div>
+                  <div class="initiative-row">
+                    <span class="initiative-dot" aria-hidden="true"></span>
+                    <div><span class="initiative-name">BI Agent</span><span class="initiative-note">异动发现与 Chat 问数试点</span></div>
+                    <span class="status status-green">阶段</span>
+                  </div>
+                  <div class="initiative-row">
+                    <span class="initiative-dot" aria-hidden="true"></span>
+                    <div><span class="initiative-name">ABtest 能力</span><span class="initiative-note">实验分析并入 BI，不单独建系统</span></div>
+                    <span class="status status-green">并入</span>
+                  </div>
+                </div>
+              </section>
+
+              <section class="quadrant quadrant-q1" aria-labelledby="q1-title">
+                <div class="quadrant-header">
+                  <div>
+                    <span class="quadrant-title" id="q1-title">Q1 · 重要且紧急</span>
+                    <span class="quadrant-subtitle">立即立项，保护核心人力</span>
+                  </div>
+                  <span class="status status-blue">一号工程</span>
+                </div>
+                <article class="main-initiative">
+                  <div class="main-initiative-title">
+                    <h3>投放系统主线</h3>
+                    <span class="status status-blue">立即启动</span>
+                  </div>
+                  <p>统一承接投放工具、AI 素材能力和投放 Agent，按一个业务闭环验收。</p>
+                  <div class="scope-list" aria-label="投放系统 Q3 范围">
+                    <span>数据迁移</span>
+                    <span>数据可视化</span>
+                    <span>AI 打标签 / 切片</span>
+                    <span>素材变体生产</span>
+                    <span>投放 Agent / Skill</span>
+                  </div>
+                </article>
+              </section>
+
+              <section class="quadrant quadrant-q4" aria-labelledby="q4-title">
+                <div class="quadrant-header">
+                  <div>
+                    <span class="quadrant-title" id="q4-title">Q4 · 不重要不紧急</span>
+                    <span class="quadrant-subtitle">暂缓，不独立配置团队</span>
+                  </div>
+                  <span class="status">冻结范围</span>
+                </div>
+                <div class="initiative-list">
+                  <div class="initiative-row">
+                    <span class="initiative-dot" aria-hidden="true"></span>
+                    <div><span class="initiative-name">AI PM 平台化</span><span class="initiative-note">先验证收集试点，不做完整项目管理系统</span></div>
+                    <span class="status">暂缓</span>
+                  </div>
+                  <div class="initiative-row">
+                    <span class="initiative-dot" aria-hidden="true"></span>
+                    <div><span class="initiative-name">ABtest 独立系统</span><span class="initiative-note">数据治理与产品能力均并入 BI</span></div>
+                    <span class="status">不立项</span>
+                  </div>
+                </div>
+              </section>
+
+              <section class="quadrant quadrant-q3" aria-labelledby="q3-title">
+                <div class="quadrant-header">
+                  <div>
+                    <span class="quadrant-title" id="q3-title">Q3 · 紧急不重要</span>
+                    <span class="quadrant-subtitle">限时 MVP，到期用数据决策</span>
+                  </div>
+                  <span class="status status-amber">控制投入</span>
+                </div>
+                <div class="initiative-list">
+                  <div class="initiative-row">
+                    <span class="initiative-dot" aria-hidden="true"></span>
+                    <div><span class="initiative-name">内部分发平台</span><span class="initiative-note">飞书审批、通知、权限与版本记录</span></div>
+                    <span class="status status-amber">4-6 周</span>
+                  </div>
+                  <div class="initiative-row">
+                    <span class="initiative-dot" aria-hidden="true"></span>
+                    <div><span class="initiative-name">AI PM 收集 MVP</span><span class="initiative-note">问题、Bug、需求的收集、归类与去重</span></div>
+                    <span class="status status-amber">试点</span>
+                  </div>
+                </div>
+              </section>
+            </div>
+          </div>
+
+          <div class="matrix-axis-bottom" aria-hidden="true">
+            <span>← 战略准备</span>
+            <strong>紧急程度</strong>
+            <span>立即执行 →</span>
+          </div>
+        </div>
+
+        <aside class="decision-panel" aria-labelledby="staff-verdict-title">
+          <div>
+            <span class="decision-panel-kicker">Staffing Verdict</span>
+            <h2 id="staff-verdict-title">需要调人，但当前不建议直接扩编</h2>
+            <p>先通过项目收口和内部调岗保护投放主线；只有核心阵容仍无法持续保障时，才启动借调或招聘。</p>
+          </div>
+
+          <div class="allocation-focus">
+            <span class="allocation-number">68%</span>
+            <div>
+              <strong>投放主线参考产能</strong>
+              <span>建议区间 65%-70%，不被其他项目临时借用</span>
+            </div>
+          </div>
+
+          <div class="staff-baseline" aria-label="投放主线最低阵容">
+            <div class="staff-role"><span>业务 PM</span><span>1</span></div>
+            <div class="staff-role"><span>技术负责人</span><span>1</span></div>
+            <div class="staff-role"><span>前端</span><span>2</span></div>
+            <div class="staff-role"><span>后端</span><span>2</span></div>
+            <div class="staff-role"><span>数据</span><span>1</span></div>
+            <div class="staff-role"><span>AI</span><span>1</span></div>
+            <div class="staff-role"><span>QA</span><span>0.5-1</span></div>
+            <div class="staff-role"><span>设计</span><span>0.5</span></div>
+          </div>
+
+          <ol class="action-steps">
+            <li class="action-step">
+              <span class="step-number">1</span>
+              <div><strong>立即调岗</strong><p>至少 1 名 AI 与 1 名数据角色固定到投放系统。</p></div>
+            </li>
+            <li class="action-step">
+              <span class="step-number">2</span>
+              <div><strong>冻结低价值范围</strong><p>AI PM 平台化、独立 ABtest、泛化素材探索不配置专职团队。</p></div>
+            </li>
+            <li class="action-step">
+              <span class="step-number">3</span>
+              <div><strong>再判断是否增编</strong><p>若连续 10 周无法保障最低阵容，再按瓶颈补数据、后端或 AI。</p></div>
+            </li>
+          </ol>
+
+          <div class="constraint-note">
+            <p><strong>资源红线：</strong>如果没有第二组 AI / 数据产能，AI 基建、BI Agent、素材 Agent 应顺延，不从投放主线拆人。</p>
+          </div>
+        </aside>
+      </section>
+
+      <section class="section" aria-labelledby="staffing-title">
+        <div class="section-heading">
+          <div>
+            <h2 id="staffing-title">人员部署方案</h2>
+            <p>按 Q3 可用产能归一化，先保障增长主线，再建设共用能力，内部效率项目只保留小队突击。</p>
+          </div>
+          <span class="status">参考配置，可按现有人数同比缩放</span>
+        </div>
+
+        <figure aria-label="Q3 推荐产能分配：投放主线 68%，AI 与 BI 能力线 22%，内部效率项目 10%。">
+          <div class="allocation-chart">
+            <div class="allocation-segment segment-main"><strong>68%</strong><span>&nbsp;投放主线</span></div>
+            <div class="allocation-segment segment-capability"><strong>22%</strong><span>&nbsp;AI / BI</span></div>
+            <div class="allocation-segment segment-internal"><strong>10%</strong><span>&nbsp;内部效率</span></div>
+          </div>
+        </figure>
+
+        <div class="staffing-tracks">
+          <article class="staffing-track staffing-track-main">
+            <h3>A · 增长投放主线</h3>
+            <p class="track-share">65%-70% · 专职保护</p>
+            <div class="role-grid">
+              <div><span>PM / TL</span><span>1 + 1</span></div>
+              <div><span>前端 / 后端</span><span>2 + 2</span></div>
+              <div><span>数据 / AI</span><span>1 + 1</span></div>
+              <div><span>QA / 设计</span><span>0.5-1 / 0.5</span></div>
+            </div>
+            <p class="track-rule">统一对数据迁移、投放闭环与 Agent 结果负责。</p>
+          </article>
+
+          <article class="staffing-track staffing-track-capability">
+            <h3>B · AI / BI 能力线</h3>
+            <p class="track-share">20%-25% · 独立可用产能</p>
+            <div class="role-grid">
+              <div><span>数据产品</span><span>0.5</span></div>
+              <div><span>AI / 数据</span><span>0.5-1 / 0.5-1</span></div>
+              <div><span>后端 / 前端</span><span>0.5-1 / 0.5</span></div>
+              <div><span>QA</span><span>0.25</span></div>
+            </div>
+            <p class="track-rule">评估集、语义层和实验分析共用；ABtest 不单独组队。</p>
+          </article>
+
+          <article class="staffing-track staffing-track-internal">
+            <h3>C · 内部效率小队</h3>
+            <p class="track-share">5%-10% · 4-6 周突击</p>
+            <div class="role-grid">
+              <div><span>PM</span><span>0.25</span></div>
+              <div><span>全栈</span><span>1</span></div>
+              <div><span>AI</span><span>0.25 按需</span></div>
+              <div><span>QA</span><span>0.25</span></div>
+            </div>
+            <p class="track-rule">完成安装包分发和需求收集闭环后即收口。</p>
+          </article>
+        </div>
+
+        <div class="hc-trigger">
+          <div>
+            <span class="decision-label">增编触发条件</span>
+            <h3>不是“项目多”，而是“关键角色持续不足”</h3>
+          </div>
+          <ul>
+            <li>压缩 Q2、Q3、Q4 范围后，投放最低阵容仍无法连续保障 10 周。</li>
+            <li>同一稀缺角色被两个一级里程碑同时占用，且无法通过顺序调整化解。</li>
+            <li>补人顺序按真实瓶颈决定：数据迁移 / 口径 → 数据；渠道集成 → 后端；素材与 Agent 并行 → AI。</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="portfolio-title">
+        <div class="section-heading">
+          <div>
+            <h2 id="portfolio-title">立项清单与 Q3 边界</h2>
+            <p>所有项目都给出明确的“做什么”和“不做什么”，避免高价值方向被无限扩张。</p>
+          </div>
+        </div>
+
+        <div class="portfolio-table-wrap">
+          <table class="portfolio-table">
+            <thead>
+              <tr>
+                <th>项目</th>
+                <th>象限</th>
+                <th>立项结论</th>
+                <th>Q3 交付边界</th>
+                <th>人员策略</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td data-label="项目"><strong>投放系统</strong><span class="table-subtext">含投放 Agent / Skill</span></td>
+                <td data-label="象限"><span class="status status-blue">Q1</span></td>
+                <td data-label="立项结论"><strong>立即立项</strong></td>
+                <td data-label="Q3 交付边界">数据迁移、可视化、AI 打标 / 切片 / 变体、投放查询与分析管理闭环。</td>
+                <td data-label="人员策略">专职核心团队，65%-70% 产能。</td>
+              </tr>
+              <tr>
+                <td data-label="项目"><strong>AI 基建</strong></td>
+                <td data-label="象限"><span class="status status-green">Q2</span></td>
+                <td data-label="立项结论"><strong>能力立项</strong></td>
+                <td data-label="Q3 交付边界">评估集、语义层、自动化测试；必须被投放或 BI 场景消费。</td>
+                <td data-label="人员策略">独立能力池，无第二组人则顺延。</td>
+              </tr>
+              <tr>
+                <td data-label="项目"><strong>素材 Agent</strong></td>
+                <td data-label="象限"><span class="status status-green">Q2</span></td>
+                <td data-label="立项结论"><strong>条件立项</strong></td>
+                <td data-label="Q3 交付边界">关键帧提取、提示词反推、素材变体，并接入素材库与投放链路。</td>
+                <td data-label="人员策略">复用能力线，不单独组队。</td>
+              </tr>
+              <tr>
+                <td data-label="项目"><strong>BI Agent</strong></td>
+                <td data-label="象限"><span class="status status-green">Q2</span></td>
+                <td data-label="立项结论"><strong>阶段立项</strong></td>
+                <td data-label="Q3 交付边界">异动发现、指标解释与 Chat 问数，限定指标域和试点人群。</td>
+                <td data-label="人员策略">与 AI 基建共用数据 / 后端能力。</td>
+              </tr>
+              <tr>
+                <td data-label="项目"><strong>ABtest</strong></td>
+                <td data-label="象限"><span class="status status-green">Q2</span></td>
+                <td data-label="立项结论"><strong>并入 BI</strong></td>
+                <td data-label="Q3 交付边界">实验读取、显著性判断、结果解释和复盘模板。</td>
+                <td data-label="人员策略">不单独设置 PM、前后端和数据团队。</td>
+              </tr>
+              <tr>
+                <td data-label="项目"><strong>内部分发平台</strong></td>
+                <td data-label="象限"><span class="status status-amber">Q3</span></td>
+                <td data-label="立项结论"><strong>限时 MVP</strong></td>
+                <td data-label="Q3 交付边界">安装包上传、版本、权限、飞书审批 / 通知和分发记录。</td>
+                <td data-label="人员策略">全栈 1 人为主，4-6 周收口。</td>
+              </tr>
+              <tr>
+                <td data-label="项目"><strong>AI PM</strong></td>
+                <td data-label="象限"><span class="status status-amber">Q3 / Q4</span></td>
+                <td data-label="立项结论"><strong>只做收集试点</strong></td>
+                <td data-label="Q3 交付边界">问题、Bug、需求收集、归类和去重；完整项目管理平台暂缓。</td>
+                <td data-label="人员策略">内部效率小队按需支持，不设独立团队。</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="timeline-title">
+        <div class="section-heading">
+          <div>
+            <h2 id="timeline-title">Q3 推荐推进顺序</h2>
+            <p>先解决数据和口径依赖，再接入 AI / BI 能力，9 月统一做业务闭环验收和 Q4 取舍。</p>
+          </div>
+        </div>
+
+        <div class="timeline" role="table" aria-label="Q3 三条项目线的月度推进顺序">
+          <div class="timeline-header" role="columnheader">项目线</div>
+          <div class="timeline-header" role="columnheader">7 月 · 定界与依赖</div>
+          <div class="timeline-header" role="columnheader">8 月 · 核心闭环</div>
+          <div class="timeline-header" role="columnheader">9 月 · 验收与取舍</div>
+
+          <div class="timeline-lane" role="rowheader">投放主线</div>
+          <div class="timeline-cell" role="cell"><span class="month-label">7 月</span>数据迁移、指标口径、核心流程定界</div>
+          <div class="timeline-cell" role="cell"><span class="month-label">8 月</span>可视化、素材 AI、广告查询与分析</div>
+          <div class="timeline-cell" role="cell"><span class="month-label">9 月</span>Agent 管理动作与端到端验收</div>
+
+          <div class="timeline-lane" role="rowheader">AI / BI</div>
+          <div class="timeline-cell" role="cell"><span class="month-label">7 月</span>评估集、语义层、自动化测试基线</div>
+          <div class="timeline-cell" role="cell"><span class="month-label">8 月</span>BI 异动发现与 Chat 小范围试点</div>
+          <div class="timeline-cell" role="cell"><span class="month-label">9 月</span>ABtest 并入 BI，评审 Q4 扩展</div>
+
+          <div class="timeline-lane" role="rowheader">内部效率</div>
+          <div class="timeline-cell" role="cell"><span class="month-label">7 月</span>确认飞书流程与 MVP 验收口径</div>
+          <div class="timeline-cell" role="cell"><span class="month-label">8 月</span>内部分发 4-6 周突击；AI PM 收集试点</div>
+          <div class="timeline-cell" role="cell"><span class="month-label">9 月</span>按使用率与节省工时决定是否继续</div>
+        </div>
+      </section>
+
+      <footer class="report-footer">
+        <span>判断口径：业务价值 → 公司级复用 → Q3 可验收闭环 → 依赖成熟度</span>
+        <span>基于当前项目描述的初步组合评估 · 2026-07-10</span>
+      </footer>
+    </main>
+  </body>
+</html>
